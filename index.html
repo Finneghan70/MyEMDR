@@ -1,0 +1,708 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Regulation Mixer V3</title>
+<style>
+  :root{
+    /* brighter pastels */
+    --bgA:#ffd6ee;
+    --bgB:#cfefff;
+    --bgC:#fff0b8;
+    --card:#ffffffef;
+    --stroke:#ff76b8;
+    --stroke2:#5cc8ff;
+    --ink:#242424;
+    --muted:#5a5a5a;
+    --shadow: 0 14px 32px rgba(0,0,0,.10);
+    --good:#2fd17a;
+    --warn:#f6c24a;
+    --stop:#ff5a74;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:18px;
+    font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
+    color:var(--ink);
+    max-width: 980px;
+    background:
+      radial-gradient(900px 550px at 5% 0%, var(--bgB), transparent 55%),
+      radial-gradient(900px 650px at 105% 0%, var(--bgA), transparent 60%),
+      radial-gradient(700px 500px at 50% 110%, var(--bgC), transparent 60%),
+      linear-gradient(180deg, #ffffff, #ffe9f6 55%, #e8f7ff);
+  }
+  .topbar{
+    display:flex; justify-content:space-between; align-items:flex-start;
+    gap:12px; flex-wrap:wrap; margin-bottom:12px;
+  }
+  h1{ margin:0; font-size:20px; letter-spacing:.2px; }
+  .sub{ font-size:12px; color:var(--muted); margin-top:4px; line-height:1.35; }
+  .badge{
+    padding:8px 12px;
+    border-radius:999px;
+    border:2px solid var(--stroke2);
+    background:#fff;
+    box-shadow:var(--shadow);
+    font-size:12px; color:#3c3c3c;
+  }
+  .grid{
+    display:grid; grid-template-columns:1fr; gap:14px;
+  }
+  @media(min-width:920px){ .grid{ grid-template-columns: 1.1fr .9fr; } }
+
+  .card{
+    background:var(--card);
+    border:2px solid var(--stroke);
+    border-radius:22px;
+    padding:16px;
+    box-shadow:var(--shadow);
+    backdrop-filter: blur(7px);
+  }
+  .card.alt{ border-color: var(--stroke2); }
+
+  h3{ margin:0 0 10px; font-size:15px; letter-spacing:.25px; }
+
+  label{ display:block; font-size:12px; color:var(--muted); margin:9px 0 6px; }
+
+  input, select, button{
+    width:100%;
+    padding:11px 12px;
+    border-radius:16px;
+    border:2px solid #ededed;
+    background:#fff;
+    font-size:14px;
+  }
+  input[type=range]{ padding:9px; }
+
+  button{
+    cursor:pointer;
+    font-weight:850;
+    letter-spacing:.35px;
+    transition: .15s transform ease, .15s box-shadow ease, .15s opacity ease;
+  }
+  button:hover{ transform: translateY(-1px); box-shadow: 0 8px 18px rgba(0,0,0,.10); }
+  button:disabled{ opacity:.55; cursor:not-allowed; transform:none; box-shadow:none; }
+
+  .btnrow{ display:flex; gap:10px; flex-wrap:wrap; }
+  .btnrow button{ flex:1; }
+
+  .primary{ border-color:#111; }
+  .good{ border-color:#b8f3d1; background: linear-gradient(135deg,#f0fff6,#ffffff); }
+  .warn{ border-color:#ffe6a6; background: linear-gradient(135deg,#fff7e1,#ffffff); }
+  .stop{ border-color:#ffc2cb; background: linear-gradient(135deg,#fff0f2,#ffffff); }
+
+  .status{
+    margin-top:12px;
+    padding:11px 12px;
+    border-radius:16px;
+    border:2px dashed var(--stroke);
+    background:#fff;
+    font-size:13px;
+    line-height:1.35;
+  }
+  .status strong{ font-weight:900; }
+  .small{ font-size:12px; color:var(--muted); line-height:1.35; margin-top:8px; }
+  .row{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+
+  .meterWrap{
+    margin-top:12px;
+    border:2px solid #eee;
+    border-radius:16px;
+    background:#fff;
+    padding:10px 12px;
+  }
+  .meterTop{
+    display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap;
+    font-size:12px; color:var(--muted); margin-bottom:8px;
+  }
+  .bar{
+    width:100%;
+    height:12px;
+    border-radius:999px;
+    background: linear-gradient(90deg, #f2f2f2, #f7f7f7);
+    overflow:hidden;
+    border:1px solid #eee;
+  }
+  .bar > div{
+    height:100%;
+    width:0%;
+    border-radius:999px;
+    background: linear-gradient(90deg, var(--stroke2), var(--stroke));
+    transition: width .25s ease;
+  }
+  .divider{ height:12px; }
+
+  .pill{
+    display:inline-block;
+    padding:2px 8px;
+    border-radius:999px;
+    border:1px solid #eee;
+    background:#fff;
+    font-size:12px;
+    color:#444;
+  }
+
+  .twoColTight{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+</style>
+</head>
+
+<body>
+  <div class="topbar">
+    <div>
+      <h1>Regulation Audio Mixer <span class="pill">V3</span></h1>
+      <div class="sub">
+        Loads your grounding voice audio, plays continuous left/right beeps underneath, and (on supported browsers) records a downloadable mixed file.
+      </div>
+    </div>
+    <div class="badge">Headphones recommended • Export most reliable on desktop Chrome/Edge</div>
+  </div>
+
+  <div class="grid">
+
+    <!-- LEFT: workflow -->
+    <div class="card">
+      <h3>1) Load your grounding voice</h3>
+      <label>Choose audio file (MP3/M4A recommended on iPad)</label>
+      <input type="file" id="voiceFile" accept="audio/*" />
+      <div class="btnrow" style="margin-top:10px;">
+        <button class="primary" id="btnLoad">Load Voice</button>
+        <button id="btnTestBeeps">Test Beeps</button>
+      </div>
+
+      <div class="status" id="loadStatus">
+        <strong>Status:</strong> No voice loaded yet.
+      </div>
+
+      <div class="divider"></div>
+
+      <h3>2) Presets</h3>
+      <div class="btnrow">
+        <button id="presetCalm">Calm</button>
+        <button id="presetReset">Fast Reset</button>
+        <button id="presetWork">Work Mode</button>
+      </div>
+      <div class="small">Presets set pace, tone, ducking, and fade. You can still tweak manually on the right.</div>
+
+      <div class="divider"></div>
+
+      <h3>3) Play and Export</h3>
+      <div class="btnrow">
+        <button class="good" id="btnPlay" disabled>Play Mixed</button>
+        <button class="stop" id="btnStop" disabled>Stop</button>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="btnrow">
+        <button class="warn" id="btnRecord" disabled>Record Mixed</button>
+        <button id="btnDownloadLast" disabled>Download Last Recording</button>
+      </div>
+
+      <div class="meterWrap">
+        <div class="meterTop">
+          <div><strong>Recording progress</strong></div>
+          <div id="timeReadout">00:00 / 00:00</div>
+        </div>
+        <div class="bar"><div id="barFill"></div></div>
+        <div class="small" id="exportNote">
+          On iPad browsers, downloads may be blocked even if recording completes. For guaranteed export, open this file on a desktop in Chrome/Edge.
+        </div>
+      </div>
+
+      <div class="status" id="runStatus"><strong>Status:</strong> Idle.</div>
+    </div>
+
+    <!-- RIGHT: tuning -->
+    <div class="card alt">
+      <h3>Sound Settings</h3>
+
+      <div class="row">
+        <div>
+          <label>Beep pace (seconds per side)</label>
+          <select id="pace">
+            <option value="1.3">Slow</option>
+            <option value="1.0" selected>Medium</option>
+            <option value="0.7">Brisk</option>
+          </select>
+        </div>
+        <div>
+          <label>Beep tone (Hz)</label>
+          <input id="freq" type="number" value="520" min="80" max="1200" />
+        </div>
+      </div>
+
+      <div class="row">
+        <div>
+          <label>Beep volume</label>
+          <input id="beepVol" type="range" min="0" max="0.2" step="0.005" value="0.11" />
+          <div class="small">If you can’t hear beeps, raise this to 0.14–0.16 while testing.</div>
+        </div>
+        <div>
+          <label>Ducking under voice</label>
+          <select id="duck">
+            <option value="1.00">Off</option>
+            <option value="0.80">Light</option>
+            <option value="0.60" selected>Medium</option>
+            <option value="0.40">Strong</option>
+          </select>
+          <div class="small">Ducking makes beeps softer under the voice so words stay clear.</div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div>
+          <label>Fade in/out (seconds)</label>
+          <select id="fade">
+            <option value="0">Off</option>
+            <option value="2">2</option>
+            <option value="4" selected>4</option>
+            <option value="6">6</option>
+          </select>
+        </div>
+        <div>
+          <label>Beep style</label>
+          <select id="beepType">
+            <option value="sine" selected>Soft</option>
+            <option value="triangle">Gentle</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <h3>Export Details</h3>
+      <div class="twoColTight">
+        <div>
+          <label>Output filename</label>
+          <input id="fileName" value="regulation-mix-v3.webm" />
+        </div>
+        <div>
+          <label>Export format (browser dependent)</label>
+          <select id="mimePref">
+            <option value="auto" selected>Auto</option>
+            <option value="audio/webm">audio/webm</option>
+            <option value="audio/ogg">audio/ogg</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="small">
+        Tip: If you export a .webm and need MP3, you can convert later (desktop is easiest).
+      </div>
+    </div>
+
+  </div>
+
+<script>
+/* =========================================================
+   Regulation Mixer V3
+   - Separate Play / Record / Download buttons
+   - Progress bar + time readout
+   - Stores "last recording" blob URL
+   - Safari/iOS friendly load (requires user gesture)
+   ========================================================= */
+
+let ctx = null;
+let chosenFile = null;
+let voiceBuffer = null;
+
+let voiceNode = null;
+let gainVoice = null;
+let gainBeeps = null;
+
+let tickTimer = null;
+let running = false;
+
+// recording
+let mediaDest = null;
+let recorder = null;
+let recChunks = [];
+let lastRecordingUrl = null;
+let lastRecordingBlob = null;
+
+// progress UI
+let progressTimer = null;
+let recordStartMs = 0;
+let recordTotalMs = 0;
+
+const $ = (id) => document.getElementById(id);
+
+function setLoadStatus(html){ $("loadStatus").innerHTML = html; }
+function setRunStatus(html){ $("runStatus").innerHTML = html; }
+
+function ensureCtx(){
+  if (!ctx) ctx = new (window.AudioContext || window.webkitAudioContext)();
+  return ctx;
+}
+
+function fmtTime(sec){
+  sec = Math.max(0, Math.floor(sec));
+  const m = String(Math.floor(sec/60)).padStart(2,"0");
+  const s = String(sec%60).padStart(2,"0");
+  return `${m}:${s}`;
+}
+
+function setProgress(elapsedMs, totalMs){
+  const pct = totalMs > 0 ? Math.min(100, (elapsedMs/totalMs)*100) : 0;
+  $("barFill").style.width = pct.toFixed(1) + "%";
+  $("timeReadout").textContent = `${fmtTime(elapsedMs/1000)} / ${fmtTime(totalMs/1000)}`;
+}
+
+function stopProgress(){
+  if (progressTimer) clearInterval(progressTimer);
+  progressTimer = null;
+  setProgress(0, recordTotalMs || 0);
+}
+
+function startProgress(totalMs){
+  recordStartMs = Date.now();
+  recordTotalMs = totalMs;
+  setProgress(0, totalMs);
+  if (progressTimer) clearInterval(progressTimer);
+  progressTimer = setInterval(()=>{
+    const elapsed = Date.now() - recordStartMs;
+    setProgress(elapsed, totalMs);
+  }, 250);
+}
+
+function hardStopAll(){
+  running = false;
+  clearTimeout(tickTimer);
+  tickTimer = null;
+
+  try { voiceNode?.stop(); } catch {}
+  voiceNode = null;
+
+  // stop recorder if active (will trigger onstop)
+  if (recorder && recorder.state !== "inactive") {
+    try { recorder.stop(); } catch {}
+  }
+
+  $("btnStop").disabled = true;
+  $("btnPlay").disabled = !voiceBuffer;
+  $("btnRecord").disabled = !voiceBuffer;
+
+  stopProgress();
+}
+
+function applyFade(gainNode, durationSec){
+  const fade = Number($("fade").value);
+  if (!fade || fade <= 0) return;
+  const c = ensureCtx();
+  const now = c.currentTime;
+
+  gainNode.gain.setValueAtTime(0.0001, now);
+  gainNode.gain.exponentialRampToValueAtTime(1.0, now + fade);
+
+  const endAt = now + durationSec;
+  gainNode.gain.setValueAtTime(1.0, Math.max(now + fade, endAt - fade));
+  gainNode.gain.exponentialRampToValueAtTime(0.0001, endAt);
+}
+
+function makeBeep(pan){
+  const c = ensureCtx();
+  const osc = c.createOscillator();
+  const g = c.createGain();
+  const p = c.createStereoPanner();
+
+  p.pan.value = pan;
+  osc.type = $("beepType").value;
+  osc.frequency.value = Number($("freq").value);
+
+  const t0 = c.currentTime;
+  g.gain.setValueAtTime(0.0001, t0);
+  g.gain.exponentialRampToValueAtTime(1.0, t0 + 0.01);
+  g.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.12);
+
+  osc.connect(g).connect(p).connect(gainBeeps);
+  osc.start();
+  osc.stop(t0 + 0.15);
+}
+
+function startBeeps(durationSec){
+  const intervalMs = Number($("pace").value) * 1000;
+  const start = Date.now();
+  let side = 0;
+
+  const tick = () => {
+    if (!running) return;
+    makeBeep(side ? 1 : -1);
+    side = 1 - side;
+
+    if (Date.now() - start < durationSec * 1000) {
+      tickTimer = setTimeout(tick, intervalMs);
+    }
+  };
+  tick();
+}
+
+function buildPlaybackGraph(){
+  const c = ensureCtx();
+  gainVoice = c.createGain();
+  gainBeeps = c.createGain();
+
+  const beepBase = Number($("beepVol").value);
+  const duck = Number($("duck").value);
+  gainBeeps.gain.value = beepBase * duck;
+
+  gainVoice.connect(c.destination);
+  gainBeeps.connect(c.destination);
+
+  applyFade(gainVoice, voiceBuffer.duration);
+}
+
+function buildRecordGraph(){
+  const c = ensureCtx();
+  gainVoice = c.createGain();
+  gainBeeps = c.createGain();
+
+  const beepBase = Number($("beepVol").value);
+  const duck = Number($("duck").value);
+  gainBeeps.gain.value = beepBase * duck;
+
+  mediaDest = c.createMediaStreamDestination();
+
+  // record path
+  gainVoice.connect(mediaDest);
+  gainBeeps.connect(mediaDest);
+
+  // monitor to speakers
+  gainVoice.connect(c.destination);
+  gainBeeps.connect(c.destination);
+
+  applyFade(gainVoice, voiceBuffer.duration);
+}
+
+function canTryMime(mime){
+  try {
+    return window.MediaRecorder && MediaRecorder.isTypeSupported && MediaRecorder.isTypeSupported(mime);
+  } catch {
+    return false;
+  }
+}
+
+function pickMime(){
+  const pref = $("mimePref").value;
+  if (pref !== "auto") return pref;
+
+  // choose best supported
+  const candidates = ["audio/webm;codecs=opus", "audio/webm", "audio/ogg;codecs=opus", "audio/ogg"];
+  for (const m of candidates){
+    if (canTryMime(m)) return m;
+  }
+  return ""; // let browser choose
+}
+
+/* ===========================
+   UI EVENTS
+   =========================== */
+
+$("voiceFile").addEventListener("change", (e)=>{
+  chosenFile = e.target.files?.[0] || null;
+  voiceBuffer = null;
+  $("btnPlay").disabled = true;
+  $("btnRecord").disabled = true;
+  $("btnStop").disabled = true;
+
+  if (!chosenFile){
+    setLoadStatus("<strong>Status:</strong> No file selected.");
+    return;
+  }
+  setLoadStatus(`<strong>Status:</strong> Selected <strong>${chosenFile.name}</strong>. Tap <strong>Load Voice</strong>.`);
+});
+
+$("btnLoad").addEventListener("click", async ()=>{
+  if (!chosenFile) return alert("Choose a voice file first.");
+  const c = ensureCtx();
+  await c.resume?.(); // Safari unlock
+
+  try{
+    const arr = await chosenFile.arrayBuffer();
+    voiceBuffer = await c.decodeAudioData(arr);
+
+    $("btnPlay").disabled = false;
+    $("btnRecord").disabled = false;
+
+    setLoadStatus(`<strong>Status:</strong> Loaded. Duration <strong>${voiceBuffer.duration.toFixed(1)}s</strong>.`);
+    setRunStatus("<strong>Status:</strong> Ready.");
+  }catch(err){
+    console.error(err);
+    voiceBuffer = null;
+    $("btnPlay").disabled = true;
+    $("btnRecord").disabled = true;
+    setLoadStatus("<strong>Status:</strong> Could not decode. Try converting to MP3 or M4A.");
+    alert("Your browser couldn't decode that file. MP3/M4A is most reliable on iPad.");
+  }
+});
+
+$("btnTestBeeps").addEventListener("click", async ()=>{
+  const c = ensureCtx();
+  await c.resume?.();
+
+  gainBeeps = c.createGain();
+  gainBeeps.gain.value = Math.max(0.10, Number($("beepVol").value));
+  gainBeeps.connect(c.destination);
+
+  let count = 0;
+  let side = 0;
+  const go = () => {
+    if (count >= 6) return;
+    makeBeep(side ? 1 : -1);
+    side = 1 - side;
+    count++;
+    setTimeout(go, 600);
+  };
+  go();
+  setRunStatus("<strong>Status:</strong> Testing beeps.");
+});
+
+$("btnPlay").addEventListener("click", async ()=>{
+  if (!voiceBuffer) return alert("Load voice first.");
+  const c = ensureCtx();
+  await c.resume?.();
+
+  hardStopAll();
+  buildPlaybackGraph();
+
+  voiceNode = c.createBufferSource();
+  voiceNode.buffer = voiceBuffer;
+  voiceNode.connect(gainVoice);
+
+  running = true;
+  $("btnStop").disabled = false;
+  $("btnPlay").disabled = true;
+  $("btnRecord").disabled = true;
+
+  setRunStatus("<strong>Status:</strong> Playing mixed track.");
+  voiceNode.start();
+  startBeeps(voiceBuffer.duration);
+
+  voiceNode.onended = () => {
+    hardStopAll();
+    setRunStatus("<strong>Status:</strong> Finished playback.");
+  };
+});
+
+$("btnStop").addEventListener("click", ()=>{
+  hardStopAll();
+  setRunStatus("<strong>Status:</strong> Stopped.");
+});
+
+$("btnRecord").addEventListener("click", async ()=>{
+  if (!voiceBuffer) return alert("Load voice first.");
+  const c = ensureCtx();
+  await c.resume?.();
+
+  hardStopAll();
+  buildRecordGraph();
+
+  // set up recorder
+  recChunks = [];
+  const mime = pickMime();
+
+  try{
+    recorder = mime ? new MediaRecorder(mediaDest.stream, { mimeType: mime }) : new MediaRecorder(mediaDest.stream);
+  }catch(err){
+    console.error(err);
+    alert("Recording/export isn't supported in this browser. For guaranteed downloads, use desktop Chrome/Edge.");
+    setRunStatus("<strong>Status:</strong> Recording not supported here.");
+    return;
+  }
+
+  recorder.ondataavailable = (e)=>{ if (e.data?.size) recChunks.push(e.data); };
+
+  recorder.onstop = ()=>{
+    // build blob
+    const type = recorder.mimeType || (mime || "audio/webm");
+    lastRecordingBlob = new Blob(recChunks, { type });
+    if (lastRecordingUrl) URL.revokeObjectURL(lastRecordingUrl);
+    lastRecordingUrl = URL.createObjectURL(lastRecordingBlob);
+
+    $("btnDownloadLast").disabled = false;
+    stopProgress();
+
+    setRunStatus("<strong>Status:</strong> Recording complete. Tap <strong>Download Last Recording</strong>.");
+  };
+
+  // start audio
+  voiceNode = c.createBufferSource();
+  voiceNode.buffer = voiceBuffer;
+  voiceNode.connect(gainVoice);
+
+  running = true;
+  $("btnStop").disabled = false;
+  $("btnPlay").disabled = true;
+  $("btnRecord").disabled = true;
+
+  setRunStatus("<strong>Status:</strong> Recording mixed track. Keep this tab open.");
+  startProgress(voiceBuffer.duration * 1000);
+
+  recorder.start();
+  voiceNode.start();
+  startBeeps(voiceBuffer.duration);
+
+  // stop after duration (+ small buffer)
+  setTimeout(()=>{
+    try { recorder.stop(); } catch {}
+    running = false;
+    $("btnStop").disabled = true;
+    $("btnPlay").disabled = false;
+    $("btnRecord").disabled = false;
+  }, voiceBuffer.duration * 1000 + 250);
+});
+
+$("btnDownloadLast").addEventListener("click", ()=>{
+  if (!lastRecordingUrl){
+    alert("No recording exists yet. Tap Record Mixed first.");
+    return;
+  }
+  const name = ($("fileName").value || "regulation-mix-v3.webm").trim();
+  const a = document.createElement("a");
+  a.href = lastRecordingUrl;
+  a.download = name;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+
+  setRunStatus("<strong>Status:</strong> Download triggered. Check your Downloads / Files.");
+});
+
+/* ===========================
+   Presets
+   =========================== */
+$("presetCalm").addEventListener("click", ()=>{
+  $("pace").value="1.3";
+  $("freq").value="520";
+  $("duck").value="0.60";
+  $("beepVol").value="0.11";
+  $("fade").value="4";
+  $("beepType").value="sine";
+  setRunStatus("<strong>Status:</strong> Preset applied: Calm.");
+});
+
+$("presetReset").addEventListener("click", ()=>{
+  $("pace").value="0.7";
+  $("freq").value="560";
+  $("duck").value="0.80";
+  $("beepVol").value="0.12";
+  $("fade").value="2";
+  $("beepType").value="sine";
+  setRunStatus("<strong>Status:</strong> Preset applied: Fast Reset.");
+});
+
+$("presetWork").addEventListener("click", ()=>{
+  $("pace").value="1.0";
+  $("freq").value="440";
+  $("duck").value="0.60";
+  $("beepVol").value="0.10";
+  $("fade").value="4";
+  $("beepType").value="triangle";
+  setRunStatus("<strong>Status:</strong> Preset applied: Work Mode.");
+});
+
+/* initialize UI */
+setProgress(0,0);
+</script>
+</body>
+</html>
