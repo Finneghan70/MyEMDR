@@ -1,11 +1,10 @@
-const CACHE_NAME = "myemdr-v4-1";
+const CACHE_NAME = "myemdr-v5-1";
 const ASSETS = [
   "./",
   "./index.html",
   "./manifest.json",
   "./sw.js",
-  "./icon-192.png",
-  "./icon-512.png"
+  "./icon.svg"
 ];
 
 self.addEventListener("install", (event) => {
