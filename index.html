@@ -3,19 +3,29 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Regulation Mixer V3</title>
+<title>MyEMDR V5</title>
+
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#ffffff">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="MyEMDR">
+
 <style>
   :root{
-    /* brighter pastels */
     --bgA:#ffd6ee;
     --bgB:#cfefff;
     --bgC:#fff0b8;
+
     --card:#ffffffef;
     --stroke:#ff76b8;
     --stroke2:#5cc8ff;
+
     --ink:#242424;
     --muted:#5a5a5a;
-    --shadow: 0 14px 32px rgba(0,0,0,.10);
+
+    --shadow:0 14px 32px rgba(0,0,0,.10);
+
     --good:#2fd17a;
     --warn:#f6c24a;
     --stop:#ff5a74;
@@ -23,33 +33,28 @@
   *{box-sizing:border-box}
   body{
     margin:18px;
-    font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
+    font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;
     color:var(--ink);
-    max-width: 980px;
+    max-width:1100px;
     background:
       radial-gradient(900px 550px at 5% 0%, var(--bgB), transparent 55%),
       radial-gradient(900px 650px at 105% 0%, var(--bgA), transparent 60%),
       radial-gradient(700px 500px at 50% 110%, var(--bgC), transparent 60%),
-      linear-gradient(180deg, #ffffff, #ffe9f6 55%, #e8f7ff);
+      linear-gradient(180deg,#ffffff,#ffe9f6 55%,#e8f7ff);
   }
   .topbar{
-    display:flex; justify-content:space-between; align-items:flex-start;
-    gap:12px; flex-wrap:wrap; margin-bottom:12px;
+    display:flex; justify-content:space-between; gap:12px;
+    flex-wrap:wrap; margin-bottom:12px; align-items:flex-start;
   }
-  h1{ margin:0; font-size:20px; letter-spacing:.2px; }
-  .sub{ font-size:12px; color:var(--muted); margin-top:4px; line-height:1.35; }
+  h1{margin:0;font-size:20px}
+  .sub{font-size:12px;color:var(--muted);line-height:1.35;margin-top:4px;max-width:720px}
   .badge{
-    padding:8px 12px;
-    border-radius:999px;
-    border:2px solid var(--stroke2);
-    background:#fff;
-    box-shadow:var(--shadow);
-    font-size:12px; color:#3c3c3c;
+    padding:8px 12px;border-radius:999px;border:2px solid var(--stroke2);
+    background:#fff;box-shadow:var(--shadow);font-size:12px;color:#333;
   }
-  .grid{
-    display:grid; grid-template-columns:1fr; gap:14px;
-  }
-  @media(min-width:920px){ .grid{ grid-template-columns: 1.1fr .9fr; } }
+
+  .grid{display:grid;grid-template-columns:1fr;gap:14px}
+  @media(min-width:980px){.grid{grid-template-columns:1.05fr .95fr}}
 
   .card{
     background:var(--card);
@@ -57,41 +62,32 @@
     border-radius:22px;
     padding:16px;
     box-shadow:var(--shadow);
-    backdrop-filter: blur(7px);
+    backdrop-filter:blur(7px);
   }
-  .card.alt{ border-color: var(--stroke2); }
-
-  h3{ margin:0 0 10px; font-size:15px; letter-spacing:.25px; }
-
-  label{ display:block; font-size:12px; color:var(--muted); margin:9px 0 6px; }
-
-  input, select, button{
+  .card.alt{border-color:var(--stroke2)}
+  h3{margin:0 0 10px;font-size:15px}
+  label{display:block;font-size:12px;color:var(--muted);margin:10px 0 6px}
+  input,select,button,textarea{
     width:100%;
     padding:11px 12px;
     border-radius:16px;
-    border:2px solid #ededed;
+    border:2px solid #eee;
     background:#fff;
     font-size:14px;
   }
-  input[type=range]{ padding:9px; }
+  textarea{min-height:120px;resize:vertical}
+  input[type=range]{padding:10px}
 
-  button{
-    cursor:pointer;
-    font-weight:850;
-    letter-spacing:.35px;
-    transition: .15s transform ease, .15s box-shadow ease, .15s opacity ease;
-  }
-  button:hover{ transform: translateY(-1px); box-shadow: 0 8px 18px rgba(0,0,0,.10); }
-  button:disabled{ opacity:.55; cursor:not-allowed; transform:none; box-shadow:none; }
+  .btnrow{display:flex;gap:10px;flex-wrap:wrap}
+  .btnrow button{flex:1}
+  button{cursor:pointer;font-weight:850;letter-spacing:.25px}
+  button:disabled{opacity:.55;cursor:not-allowed}
+  .good{border-color:#b8f3d1;background:linear-gradient(135deg,#f0fff6,#fff)}
+  .warn{border-color:#ffe6a6;background:linear-gradient(135deg,#fff7e1,#fff)}
+  .stop{border-color:#ffc2cb;background:linear-gradient(135deg,#fff0f2,#fff)}
+  .primary{border-color:#111}
 
-  .btnrow{ display:flex; gap:10px; flex-wrap:wrap; }
-  .btnrow button{ flex:1; }
-
-  .primary{ border-color:#111; }
-  .good{ border-color:#b8f3d1; background: linear-gradient(135deg,#f0fff6,#ffffff); }
-  .warn{ border-color:#ffe6a6; background: linear-gradient(135deg,#fff7e1,#ffffff); }
-  .stop{ border-color:#ffc2cb; background: linear-gradient(135deg,#fff0f2,#ffffff); }
-
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
   .status{
     margin-top:12px;
     padding:11px 12px;
@@ -101,9 +97,7 @@
     font-size:13px;
     line-height:1.35;
   }
-  .status strong{ font-weight:900; }
-  .small{ font-size:12px; color:var(--muted); line-height:1.35; margin-top:8px; }
-  .row{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  .small{font-size:12px;color:var(--muted);line-height:1.35;margin-top:8px}
 
   .meterWrap{
     margin-top:12px;
@@ -113,26 +107,54 @@
     padding:10px 12px;
   }
   .meterTop{
-    display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap;
-    font-size:12px; color:var(--muted); margin-bottom:8px;
+    display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;
+    font-size:12px;color:var(--muted);margin-bottom:8px;
   }
   .bar{
     width:100%;
     height:12px;
     border-radius:999px;
-    background: linear-gradient(90deg, #f2f2f2, #f7f7f7);
+    background:linear-gradient(90deg,#f2f2f2,#f7f7f7);
     overflow:hidden;
     border:1px solid #eee;
   }
-  .bar > div{
+  .bar>div{
     height:100%;
     width:0%;
     border-radius:999px;
-    background: linear-gradient(90deg, var(--stroke2), var(--stroke));
-    transition: width .25s ease;
+    background:linear-gradient(90deg,var(--stroke2),var(--stroke));
+    transition:width .25s ease;
   }
-  .divider{ height:12px; }
 
+  /* Visual bilateral cue */
+  .vizWrap{
+    margin-top:12px;
+    padding:14px;
+    border-radius:18px;
+    border:2px solid #eee;
+    background:#fff;
+  }
+  .vizTrack{
+    position:relative;
+    height:34px;
+    border-radius:999px;
+    background:linear-gradient(90deg,#fff0f8,#eef9ff);
+    border:1px solid #eee;
+    overflow:hidden;
+  }
+  .vizDot{
+    position:absolute;
+    top:50%;
+    width:22px;
+    height:22px;
+    border-radius:999px;
+    transform:translateY(-50%);
+    background:radial-gradient(circle at 35% 35%, #fff, rgba(255,255,255,0) 55%),
+               linear-gradient(135deg, var(--stroke2), var(--stroke));
+    box-shadow:0 10px 18px rgba(0,0,0,.10);
+    left:6px;
+    transition:left .18s ease;
+  }
   .pill{
     display:inline-block;
     padding:2px 8px;
@@ -142,59 +164,83 @@
     font-size:12px;
     color:#444;
   }
-
-  .twoColTight{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
 </style>
 </head>
 
 <body>
   <div class="topbar">
     <div>
-      <h1>Regulation Audio Mixer <span class="pill">V3</span></h1>
+      <h1>MyEMDR <span class="pill">V5</span></h1>
       <div class="sub">
-        Loads your grounding voice audio, plays continuous left/right beeps underneath, and (on supported browsers) records a downloadable mixed file.
+        Personal regulation audio mixer: grounding voice + soft alternating beeps. Use as a calming tool (not a substitute for professional care).
       </div>
     </div>
-    <div class="badge">Headphones recommended • Export most reliable on desktop Chrome/Edge</div>
+    <div class="badge">Installable • Offline • Best export on desktop Chrome/Edge</div>
   </div>
 
   <div class="grid">
-
-    <!-- LEFT: workflow -->
+    <!-- LEFT -->
     <div class="card">
-      <h3>1) Load your grounding voice</h3>
-      <label>Choose audio file (MP3/M4A recommended on iPad)</label>
-      <input type="file" id="voiceFile" accept="audio/*" />
-      <div class="btnrow" style="margin-top:10px;">
-        <button class="primary" id="btnLoad">Load Voice</button>
-        <button id="btnTestBeeps">Test Beeps</button>
+      <h3>Voice source</h3>
+
+      <div class="row">
+        <div>
+          <label>Mode</label>
+          <select id="voiceMode">
+            <option value="upload" selected>Upload voice audio (best for recording/export)</option>
+            <option value="tts">TTS preview (playback only)</option>
+          </select>
+          <div class="small">TTS is for quick testing. Browsers usually cannot record/export TTS cleanly.</div>
+        </div>
+        <div>
+          <label>Preset</label>
+          <select id="preset">
+            <option value="calm" selected>Calm</option>
+            <option value="reset">Fast Reset</option>
+            <option value="work">Work Mode</option>
+          </select>
+        </div>
       </div>
 
-      <div class="status" id="loadStatus">
-        <strong>Status:</strong> No voice loaded yet.
+      <div id="uploadBlock">
+        <label>Upload grounding voice file (MP3/M4A recommended on iPad)</label>
+        <input type="file" id="voiceFile" accept="audio/*">
+        <div class="btnrow" style="margin-top:10px;">
+          <button class="primary" id="btnLoad">Load Voice</button>
+          <button id="btnTestBeeps">Test Beeps</button>
+        </div>
+        <div class="status" id="loadStatus"><strong>Status:</strong> No voice loaded yet.</div>
       </div>
 
-      <div class="divider"></div>
+      <div id="ttsBlock" style="display:none;">
+        <label>Paste your script for TTS preview</label>
+        <textarea id="ttsText" placeholder="Type or paste a short grounding script here..."></textarea>
 
-      <h3>2) Presets</h3>
-      <div class="btnrow">
-        <button id="presetCalm">Calm</button>
-        <button id="presetReset">Fast Reset</button>
-        <button id="presetWork">Work Mode</button>
+        <div class="row">
+          <div>
+            <label>TTS voice</label>
+            <select id="ttsVoice"></select>
+          </div>
+          <div>
+            <label>TTS rate</label>
+            <input id="ttsRate" type="range" min="0.7" max="1.2" step="0.05" value="0.95">
+          </div>
+        </div>
+
+        <div class="btnrow" style="margin-top:10px;">
+          <button class="good" id="btnSpeak">Play TTS + Beeps</button>
+          <button class="stop" id="btnStopTTS" disabled>Stop</button>
+        </div>
+        <div class="status" id="ttsStatus"><strong>Status:</strong> Ready for TTS preview.</div>
       </div>
-      <div class="small">Presets set pace, tone, ducking, and fade. You can still tweak manually on the right.</div>
 
-      <div class="divider"></div>
-
-      <h3>3) Play and Export</h3>
+      <h3 style="margin-top:16px;">Play and export</h3>
       <div class="btnrow">
         <button class="good" id="btnPlay" disabled>Play Mixed</button>
         <button class="stop" id="btnStop" disabled>Stop</button>
       </div>
 
-      <div class="divider"></div>
-
-      <div class="btnrow">
+      <div class="btnrow" style="margin-top:10px;">
         <button class="warn" id="btnRecord" disabled>Record Mixed</button>
         <button id="btnDownloadLast" disabled>Download Last Recording</button>
       </div>
@@ -205,17 +251,40 @@
           <div id="timeReadout">00:00 / 00:00</div>
         </div>
         <div class="bar"><div id="barFill"></div></div>
-        <div class="small" id="exportNote">
-          On iPad browsers, downloads may be blocked even if recording completes. For guaranteed export, open this file on a desktop in Chrome/Edge.
+        <div class="small">
+          If download doesn’t appear on iPad, open this site on a desktop (Chrome/Edge) and export there.
+        </div>
+      </div>
+
+      <div class="vizWrap">
+        <div class="row">
+          <div>
+            <label>Visual bilateral cue</label>
+            <select id="vizToggle">
+              <option value="on" selected>On</option>
+              <option value="off">Off</option>
+            </select>
+            <div class="small">A subtle dot moves left/right in sync with beeps.</div>
+          </div>
+          <div>
+            <label>Filename</label>
+            <input id="fileName" value="myemdr-mix-v5.webm">
+          </div>
+        </div>
+
+        <div style="margin-top:10px;">
+          <div class="vizTrack">
+            <div class="vizDot" id="vizDot"></div>
+          </div>
         </div>
       </div>
 
       <div class="status" id="runStatus"><strong>Status:</strong> Idle.</div>
     </div>
 
-    <!-- RIGHT: tuning -->
+    <!-- RIGHT -->
     <div class="card alt">
-      <h3>Sound Settings</h3>
+      <h3>Sound settings</h3>
 
       <div class="row">
         <div>
@@ -228,15 +297,15 @@
         </div>
         <div>
           <label>Beep tone (Hz)</label>
-          <input id="freq" type="number" value="520" min="80" max="1200" />
+          <input id="freq" type="number" value="520" min="80" max="1200">
         </div>
       </div>
 
       <div class="row">
         <div>
           <label>Beep volume</label>
-          <input id="beepVol" type="range" min="0" max="0.2" step="0.005" value="0.11" />
-          <div class="small">If you can’t hear beeps, raise this to 0.14–0.16 while testing.</div>
+          <input id="beepVol" type="range" min="0" max="0.2" step="0.005" value="0.11">
+          <div class="small">Testing tip: temporarily raise to 0.14–0.16 to confirm it’s audible.</div>
         </div>
         <div>
           <label>Ducking under voice</label>
@@ -246,7 +315,7 @@
             <option value="0.60" selected>Medium</option>
             <option value="0.40">Strong</option>
           </select>
-          <div class="small">Ducking makes beeps softer under the voice so words stay clear.</div>
+          <div class="small">Keeps beeps behind the voice.</div>
         </div>
       </div>
 
@@ -269,38 +338,22 @@
         </div>
       </div>
 
-      <div class="divider"></div>
-
-      <h3>Export Details</h3>
-      <div class="twoColTight">
-        <div>
-          <label>Output filename</label>
-          <input id="fileName" value="regulation-mix-v3.webm" />
-        </div>
-        <div>
-          <label>Export format (browser dependent)</label>
-          <select id="mimePref">
-            <option value="auto" selected>Auto</option>
-            <option value="audio/webm">audio/webm</option>
-            <option value="audio/ogg">audio/ogg</option>
-          </select>
-        </div>
-      </div>
-
+      <h3 style="margin-top:16px;">Notes</h3>
       <div class="small">
-        Tip: If you export a .webm and need MP3, you can convert later (desktop is easiest).
+        • Keep beeps quiet for regulation work.<br>
+        • If beeps feel activating, slow the pace (1.3) and lower the tone (440).<br>
+        • If you feel overwhelmed, stop the track and switch to simple grounding (breathing + orienting to your space).
       </div>
     </div>
-
   </div>
 
 <script>
 /* =========================================================
-   Regulation Mixer V3
-   - Separate Play / Record / Download buttons
-   - Progress bar + time readout
-   - Stores "last recording" blob URL
-   - Safari/iOS friendly load (requires user gesture)
+   MyEMDR V5
+   - Upload voice mixing + export (best desktop Chrome/Edge)
+   - TTS preview + beeps (playback only)
+   - Visual bilateral cue synchronized with beeps
+   - PWA hooks via manifest + service worker (registered below)
    ========================================================= */
 
 let ctx = null;
@@ -311,25 +364,26 @@ let voiceNode = null;
 let gainVoice = null;
 let gainBeeps = null;
 
-let tickTimer = null;
 let running = false;
+let tickTimer = null;
 
 // recording
 let mediaDest = null;
 let recorder = null;
 let recChunks = [];
 let lastRecordingUrl = null;
-let lastRecordingBlob = null;
 
 // progress UI
 let progressTimer = null;
 let recordStartMs = 0;
 let recordTotalMs = 0;
 
-const $ = (id) => document.getElementById(id);
+// bilateral visual
+let side = 0; // 0=left,1=right
 
-function setLoadStatus(html){ $("loadStatus").innerHTML = html; }
-function setRunStatus(html){ $("runStatus").innerHTML = html; }
+const $ = (id) => document.getElementById(id);
+const setRunStatus = (html) => $("runStatus").innerHTML = html;
+const setLoadStatus = (html) => $("loadStatus").innerHTML = html;
 
 function ensureCtx(){
   if (!ctx) ctx = new (window.AudioContext || window.webkitAudioContext)();
@@ -366,7 +420,14 @@ function startProgress(totalMs){
   }, 250);
 }
 
-function hardStopAll(){
+function vizMove(){
+  if ($("vizToggle").value !== "on") return;
+  const dot = $("vizDot");
+  // 6px left padding; right ~ calc(100% - dot - 6px)
+  dot.style.left = side ? "calc(100% - 28px)" : "6px";
+}
+
+function stopAll(){
   running = false;
   clearTimeout(tickTimer);
   tickTimer = null;
@@ -374,16 +435,18 @@ function hardStopAll(){
   try { voiceNode?.stop(); } catch {}
   voiceNode = null;
 
-  // stop recorder if active (will trigger onstop)
   if (recorder && recorder.state !== "inactive") {
     try { recorder.stop(); } catch {}
   }
+  recorder = null;
+
+  stopProgress();
 
   $("btnStop").disabled = true;
   $("btnPlay").disabled = !voiceBuffer;
   $("btnRecord").disabled = !voiceBuffer;
 
-  stopProgress();
+  setRunStatus("<strong>Status:</strong> Stopped.");
 }
 
 function applyFade(gainNode, durationSec){
@@ -404,9 +467,9 @@ function makeBeep(pan){
   const c = ensureCtx();
   const osc = c.createOscillator();
   const g = c.createGain();
-  const p = c.createStereoPanner();
+  const panNode = c.createStereoPanner();
 
-  p.pan.value = pan;
+  panNode.pan.value = pan;
   osc.type = $("beepType").value;
   osc.frequency.value = Number($("freq").value);
 
@@ -415,7 +478,7 @@ function makeBeep(pan){
   g.gain.exponentialRampToValueAtTime(1.0, t0 + 0.01);
   g.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.12);
 
-  osc.connect(g).connect(p).connect(gainBeeps);
+  osc.connect(g).connect(panNode).connect(gainBeeps);
   osc.start();
   osc.stop(t0 + 0.15);
 }
@@ -423,11 +486,14 @@ function makeBeep(pan){
 function startBeeps(durationSec){
   const intervalMs = Number($("pace").value) * 1000;
   const start = Date.now();
-  let side = 0;
+  side = 0;
 
   const tick = () => {
     if (!running) return;
+
+    // left/right beep
     makeBeep(side ? 1 : -1);
+    vizMove();
     side = 1 - side;
 
     if (Date.now() - start < durationSec * 1000) {
@@ -436,6 +502,93 @@ function startBeeps(durationSec){
   };
   tick();
 }
+
+function applyPreset(name){
+  if (name === "calm"){
+    $("pace").value = "1.3";
+    $("freq").value = "520";
+    $("duck").value = "0.60";
+    $("beepVol").value = "0.11";
+    $("fade").value = "4";
+    $("beepType").value = "sine";
+  } else if (name === "reset"){
+    $("pace").value = "0.7";
+    $("freq").value = "560";
+    $("duck").value = "0.80";
+    $("beepVol").value = "0.12";
+    $("fade").value = "2";
+    $("beepType").value = "sine";
+  } else if (name === "work"){
+    $("pace").value = "1.0";
+    $("freq").value = "440";
+    $("duck").value = "0.60";
+    $("beepVol").value = "0.10";
+    $("fade").value = "4";
+    $("beepType").value = "triangle";
+  }
+}
+
+/* ========= Upload Voice ========= */
+
+$("voiceFile").addEventListener("change", (e)=>{
+  chosenFile = e.target.files?.[0] || null;
+  voiceBuffer = null;
+  $("btnPlay").disabled = true;
+  $("btnRecord").disabled = true;
+
+  if (!chosenFile){
+    setLoadStatus("<strong>Status:</strong> No file selected.");
+    return;
+  }
+  setLoadStatus(`<strong>Status:</strong> Selected <strong>${chosenFile.name}</strong>. Tap <strong>Load Voice</strong>.`);
+});
+
+$("btnLoad").addEventListener("click", async ()=>{
+  if (!chosenFile) return alert("Choose a voice file first.");
+  const c = ensureCtx();
+  await c.resume?.();
+
+  try{
+    const arr = await chosenFile.arrayBuffer();
+    voiceBuffer = await c.decodeAudioData(arr);
+
+    $("btnPlay").disabled = false;
+    $("btnRecord").disabled = false;
+
+    setLoadStatus(`<strong>Status:</strong> Loaded. Duration <strong>${voiceBuffer.duration.toFixed(1)}s</strong>.`);
+    setRunStatus("<strong>Status:</strong> Ready.");
+  }catch(err){
+    console.error(err);
+    voiceBuffer = null;
+    $("btnPlay").disabled = true;
+    $("btnRecord").disabled = true;
+    setLoadStatus("<strong>Status:</strong> Could not decode. Try MP3 or M4A.");
+    alert("Decode failed in this browser. MP3/M4A is most reliable on iPad.");
+  }
+});
+
+$("btnTestBeeps").addEventListener("click", async ()=>{
+  const c = ensureCtx();
+  await c.resume?.();
+
+  gainBeeps = c.createGain();
+  gainBeeps.gain.value = Math.max(0.10, Number($("beepVol").value));
+  gainBeeps.connect(c.destination);
+
+  let count = 0;
+  side = 0;
+  const go = () => {
+    if (count >= 6) return;
+    makeBeep(side ? 1 : -1);
+    vizMove();
+    side = 1 - side;
+    count++;
+    setTimeout(go, 600);
+  };
+  go();
+
+  setRunStatus("<strong>Status:</strong> Testing beeps.");
+});
 
 function buildPlaybackGraph(){
   const c = ensureCtx();
@@ -452,117 +605,12 @@ function buildPlaybackGraph(){
   applyFade(gainVoice, voiceBuffer.duration);
 }
 
-function buildRecordGraph(){
-  const c = ensureCtx();
-  gainVoice = c.createGain();
-  gainBeeps = c.createGain();
-
-  const beepBase = Number($("beepVol").value);
-  const duck = Number($("duck").value);
-  gainBeeps.gain.value = beepBase * duck;
-
-  mediaDest = c.createMediaStreamDestination();
-
-  // record path
-  gainVoice.connect(mediaDest);
-  gainBeeps.connect(mediaDest);
-
-  // monitor to speakers
-  gainVoice.connect(c.destination);
-  gainBeeps.connect(c.destination);
-
-  applyFade(gainVoice, voiceBuffer.duration);
-}
-
-function canTryMime(mime){
-  try {
-    return window.MediaRecorder && MediaRecorder.isTypeSupported && MediaRecorder.isTypeSupported(mime);
-  } catch {
-    return false;
-  }
-}
-
-function pickMime(){
-  const pref = $("mimePref").value;
-  if (pref !== "auto") return pref;
-
-  // choose best supported
-  const candidates = ["audio/webm;codecs=opus", "audio/webm", "audio/ogg;codecs=opus", "audio/ogg"];
-  for (const m of candidates){
-    if (canTryMime(m)) return m;
-  }
-  return ""; // let browser choose
-}
-
-/* ===========================
-   UI EVENTS
-   =========================== */
-
-$("voiceFile").addEventListener("change", (e)=>{
-  chosenFile = e.target.files?.[0] || null;
-  voiceBuffer = null;
-  $("btnPlay").disabled = true;
-  $("btnRecord").disabled = true;
-  $("btnStop").disabled = true;
-
-  if (!chosenFile){
-    setLoadStatus("<strong>Status:</strong> No file selected.");
-    return;
-  }
-  setLoadStatus(`<strong>Status:</strong> Selected <strong>${chosenFile.name}</strong>. Tap <strong>Load Voice</strong>.`);
-});
-
-$("btnLoad").addEventListener("click", async ()=>{
-  if (!chosenFile) return alert("Choose a voice file first.");
-  const c = ensureCtx();
-  await c.resume?.(); // Safari unlock
-
-  try{
-    const arr = await chosenFile.arrayBuffer();
-    voiceBuffer = await c.decodeAudioData(arr);
-
-    $("btnPlay").disabled = false;
-    $("btnRecord").disabled = false;
-
-    setLoadStatus(`<strong>Status:</strong> Loaded. Duration <strong>${voiceBuffer.duration.toFixed(1)}s</strong>.`);
-    setRunStatus("<strong>Status:</strong> Ready.");
-  }catch(err){
-    console.error(err);
-    voiceBuffer = null;
-    $("btnPlay").disabled = true;
-    $("btnRecord").disabled = true;
-    setLoadStatus("<strong>Status:</strong> Could not decode. Try converting to MP3 or M4A.");
-    alert("Your browser couldn't decode that file. MP3/M4A is most reliable on iPad.");
-  }
-});
-
-$("btnTestBeeps").addEventListener("click", async ()=>{
-  const c = ensureCtx();
-  await c.resume?.();
-
-  gainBeeps = c.createGain();
-  gainBeeps.gain.value = Math.max(0.10, Number($("beepVol").value));
-  gainBeeps.connect(c.destination);
-
-  let count = 0;
-  let side = 0;
-  const go = () => {
-    if (count >= 6) return;
-    makeBeep(side ? 1 : -1);
-    side = 1 - side;
-    count++;
-    setTimeout(go, 600);
-  };
-  go();
-  setRunStatus("<strong>Status:</strong> Testing beeps.");
-});
-
 $("btnPlay").addEventListener("click", async ()=>{
   if (!voiceBuffer) return alert("Load voice first.");
   const c = ensureCtx();
   await c.resume?.();
 
-  hardStopAll();
+  stopAll();
   buildPlaybackGraph();
 
   voiceNode = c.createBufferSource();
@@ -579,53 +627,60 @@ $("btnPlay").addEventListener("click", async ()=>{
   startBeeps(voiceBuffer.duration);
 
   voiceNode.onended = () => {
-    hardStopAll();
+    stopAll();
     setRunStatus("<strong>Status:</strong> Finished playback.");
   };
 });
 
-$("btnStop").addEventListener("click", ()=>{
-  hardStopAll();
-  setRunStatus("<strong>Status:</strong> Stopped.");
-});
+$("btnStop").addEventListener("click", stopAll);
 
 $("btnRecord").addEventListener("click", async ()=>{
   if (!voiceBuffer) return alert("Load voice first.");
   const c = ensureCtx();
   await c.resume?.();
 
-  hardStopAll();
-  buildRecordGraph();
+  stopAll();
 
-  // set up recorder
+  // Build record graph
+  gainVoice = c.createGain();
+  gainBeeps = c.createGain();
+
+  const beepBase = Number($("beepVol").value);
+  const duck = Number($("duck").value);
+  gainBeeps.gain.value = beepBase * duck;
+
+  mediaDest = c.createMediaStreamDestination();
+  gainVoice.connect(mediaDest);
+  gainBeeps.connect(mediaDest);
+
+  // monitor
+  gainVoice.connect(c.destination);
+  gainBeeps.connect(c.destination);
+
+  applyFade(gainVoice, voiceBuffer.duration);
+
+  // Recorder
   recChunks = [];
-  const mime = pickMime();
-
   try{
-    recorder = mime ? new MediaRecorder(mediaDest.stream, { mimeType: mime }) : new MediaRecorder(mediaDest.stream);
+    recorder = new MediaRecorder(mediaDest.stream);
   }catch(err){
     console.error(err);
-    alert("Recording/export isn't supported in this browser. For guaranteed downloads, use desktop Chrome/Edge.");
-    setRunStatus("<strong>Status:</strong> Recording not supported here.");
+    alert("Recording not supported here. For reliable export, use desktop Chrome/Edge.");
+    setRunStatus("<strong>Status:</strong> Recording not supported in this browser.");
     return;
   }
 
   recorder.ondataavailable = (e)=>{ if (e.data?.size) recChunks.push(e.data); };
-
   recorder.onstop = ()=>{
-    // build blob
-    const type = recorder.mimeType || (mime || "audio/webm");
-    lastRecordingBlob = new Blob(recChunks, { type });
+    const blob = new Blob(recChunks, { type: recorder.mimeType || "audio/webm" });
     if (lastRecordingUrl) URL.revokeObjectURL(lastRecordingUrl);
-    lastRecordingUrl = URL.createObjectURL(lastRecordingBlob);
-
+    lastRecordingUrl = URL.createObjectURL(blob);
     $("btnDownloadLast").disabled = false;
     stopProgress();
-
     setRunStatus("<strong>Status:</strong> Recording complete. Tap <strong>Download Last Recording</strong>.");
   };
 
-  // start audio
+  // Start
   voiceNode = c.createBufferSource();
   voiceNode.buffer = voiceBuffer;
   voiceNode.connect(gainVoice);
@@ -635,14 +690,13 @@ $("btnRecord").addEventListener("click", async ()=>{
   $("btnPlay").disabled = true;
   $("btnRecord").disabled = true;
 
-  setRunStatus("<strong>Status:</strong> Recording mixed track. Keep this tab open.");
+  setRunStatus("<strong>Status:</strong> Recording… keep this tab open.");
   startProgress(voiceBuffer.duration * 1000);
 
   recorder.start();
   voiceNode.start();
   startBeeps(voiceBuffer.duration);
 
-  // stop after duration (+ small buffer)
   setTimeout(()=>{
     try { recorder.stop(); } catch {}
     running = false;
@@ -653,56 +707,122 @@ $("btnRecord").addEventListener("click", async ()=>{
 });
 
 $("btnDownloadLast").addEventListener("click", ()=>{
-  if (!lastRecordingUrl){
-    alert("No recording exists yet. Tap Record Mixed first.");
-    return;
-  }
-  const name = ($("fileName").value || "regulation-mix-v3.webm").trim();
+  if (!lastRecordingUrl) return alert("No recording available yet.");
+  const name = ($("fileName").value || "myemdr-mix-v5.webm").trim();
   const a = document.createElement("a");
   a.href = lastRecordingUrl;
   a.download = name;
   document.body.appendChild(a);
   a.click();
   a.remove();
-
-  setRunStatus("<strong>Status:</strong> Download triggered. Check your Downloads / Files.");
+  setRunStatus("<strong>Status:</strong> Download triggered. Check Downloads/Files.");
 });
 
-/* ===========================
-   Presets
-   =========================== */
-$("presetCalm").addEventListener("click", ()=>{
-  $("pace").value="1.3";
-  $("freq").value="520";
-  $("duck").value="0.60";
-  $("beepVol").value="0.11";
-  $("fade").value="4";
-  $("beepType").value="sine";
-  setRunStatus("<strong>Status:</strong> Preset applied: Calm.");
+/* ========= TTS Preview ========= */
+
+function populateVoices(){
+  const sel = $("ttsVoice");
+  const voices = window.speechSynthesis?.getVoices?.() || [];
+  sel.innerHTML = "";
+  voices.forEach((v, i)=>{
+    const opt = document.createElement("option");
+    opt.value = String(i);
+    opt.textContent = `${v.name} (${v.lang})`;
+    sel.appendChild(opt);
+  });
+}
+
+if ("speechSynthesis" in window){
+  populateVoices();
+  window.speechSynthesis.onvoiceschanged = populateVoices;
+}
+
+function stopTTS(){
+  try { window.speechSynthesis?.cancel(); } catch {}
+  running = false;
+  clearTimeout(tickTimer);
+  tickTimer = null;
+  $("btnStopTTS").disabled = true;
+  $("btnSpeak").disabled = false;
+  setRunStatus("<strong>Status:</strong> TTS stopped.");
+  $("ttsStatus").innerHTML = "<strong>Status:</strong> Ready for TTS preview.";
+}
+
+$("btnSpeak").addEventListener("click", async ()=>{
+  if (!("speechSynthesis" in window)) return alert("TTS not available in this browser.");
+  const text = ($("ttsText").value || "").trim();
+  if (!text) return alert("Paste a short script first.");
+
+  const c = ensureCtx();
+  await c.resume?.();
+
+  // Beeps bus to speakers
+  gainBeeps = c.createGain();
+  gainBeeps.gain.value = Number($("beepVol").value) * Number($("duck").value);
+  gainBeeps.connect(c.destination);
+
+  // Speak
+  const voices = window.speechSynthesis.getVoices();
+  const idx = Number($("ttsVoice").value || 0);
+  const utter = new SpeechSynthesisUtterance(text);
+  if (voices[idx]) utter.voice = voices[idx];
+  utter.rate = Number($("ttsRate").value || 0.95);
+
+  running = true;
+  $("btnSpeak").disabled = true;
+  $("btnStopTTS").disabled = false;
+
+  setRunStatus("<strong>Status:</strong> Playing TTS + beeps (preview).");
+  $("ttsStatus").innerHTML = "<strong>Status:</strong> Speaking…";
+
+  // crude duration estimate: ~140 wpm baseline, scaled by rate
+  const words = text.split(/\s+/).filter(Boolean).length;
+  const estSec = Math.max(10, (words / (140 * utter.rate)) * 60);
+
+  startBeeps(estSec);
+  vizMove();
+  window.speechSynthesis.speak(utter);
+
+  utter.onend = ()=>{
+    stopTTS();
+    setRunStatus("<strong>Status:</strong> Finished TTS preview.");
+  };
+  utter.onerror = ()=>{
+    stopTTS();
+    setRunStatus("<strong>Status:</strong> TTS error (stopped).");
+  };
 });
 
-$("presetReset").addEventListener("click", ()=>{
-  $("pace").value="0.7";
-  $("freq").value="560";
-  $("duck").value="0.80";
-  $("beepVol").value="0.12";
-  $("fade").value="2";
-  $("beepType").value="sine";
-  setRunStatus("<strong>Status:</strong> Preset applied: Fast Reset.");
+$("btnStopTTS").addEventListener("click", stopTTS);
+
+/* ========= Mode switching + presets ========= */
+
+$("voiceMode").addEventListener("change", ()=>{
+  const mode = $("voiceMode").value;
+  $("uploadBlock").style.display = (mode === "upload") ? "" : "none";
+  $("ttsBlock").style.display = (mode === "tts") ? "" : "none";
+
+  // Upload controls
+  $("btnPlay").disabled = (mode !== "upload") || !voiceBuffer;
+  $("btnRecord").disabled = (mode !== "upload") || !voiceBuffer;
+
+  // Stop any playing audio
+  stopAll();
+  stopTTS();
 });
 
-$("presetWork").addEventListener("click", ()=>{
-  $("pace").value="1.0";
-  $("freq").value="440";
-  $("duck").value="0.60";
-  $("beepVol").value="0.10";
-  $("fade").value="4";
-  $("beepType").value="triangle";
-  setRunStatus("<strong>Status:</strong> Preset applied: Work Mode.");
+$("preset").addEventListener("change", ()=>{
+  applyPreset($("preset").value);
 });
 
-/* initialize UI */
-setProgress(0,0);
+applyPreset("calm");
+
+/* ========= PWA service worker ========= */
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("./sw.js").catch(console.error);
+  });
+}
 </script>
 </body>
 </html>
